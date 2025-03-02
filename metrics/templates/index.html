@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Performance Analyzer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+        input { width: 100%; padding: 8px; margin: 5px 0; }
+        button { padding: 10px; background-color: blue; color: white; border: none; width: 100%; }
+        .output { margin-top: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔹 System Performance Analyzer</h2>
+        <form method="post">
+            <label>CPU Usage (%)</label>
+            <input type="number" name="cpu" required>
+            
+            <label>Memory Usage (MB)</label>
+            <input type="number" name="memory" required>
+            
+            <label>Disk I/O (IOPS)</label>
+            <input type="number" name="disk_io" required>
+            
+            <label>Network Latency (ms)</label>
+            <input type="number" name="network_latency" required>
+            
+            <label>Throughput (Requests/sec)</label>
+            <input type="number" name="throughput" required>
+            
+            <button type="submit">Analyze</button>
+        </form>
+
+        {% if data %}
+        <div class="output">
+            <h3> Analyzed Metrics:</h3>
+            <ul>
+                {% for key, value in data.items() %}
+                <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3> Anomaly Detection:</h3>
+            <ul>
+                {% for key, value in anomalies.items() %}
+                <li><strong>{{ key }}:</strong> {% if value %}  Anomaly Detected {% else %}  Normal {% endif %}</li>
+                {% endfor %}
+            </ul>
+
+            <h3> Root Cause Analysis:</h3>
+            <p><strong>Detected Issue:</strong> {{ root_cause }}</p>
+
+            <h3> Recommendations:</h3>
+            <ul>
+                {% for rec in recommendations %}
+                <li> {{ rec }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <p style="color: red;"> Error: {{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

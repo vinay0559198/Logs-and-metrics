@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        #result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e6f7ff;
+            border-left: 5px solid blue;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔹 Log Analyzer</h2>
+        <form id="logForm">
+            <label for="timestamp">Timestamp</label>
+            <input type="text" id="timestamp" name="timestamp" placeholder="YYYY-MM-DD HH:MM:SS" required>
+            
+            <label for="log_level">Log Level</label>
+            <select id="log_level" name="log_level">
+                <option value="INFO">INFO</option>
+                <option value="WARNING">WARNING</option>
+                <option value="ERROR">ERROR</option>
+                <option value="DEBUG">DEBUG</option>
+            </select>
+            
+            <label for="component">Component Name</label>
+            <input type="text" id="component" name="component" placeholder="Enter component name" required>
+            
+            <label for="log_message">Log Message</label>
+            <input type="text" id="log_message" name="log_message" placeholder="Enter log message" required>
+            
+            <button type="submit">Analyze Logs</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("logForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const logData = {
+                logs: [{
+                    timestamp: document.getElementById("timestamp").value,
+                    log_level: document.getElementById("log_level").value,
+                    component: document.getElementById("component").value,
+                    message: document.getElementById("log_message").value
+                }]
+            };
+
+            fetch("/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(logData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultDiv = document.getElementById("result");
+                resultDiv.style.display = "block";
+                if (data.error) {
+                    resultDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                    resultDiv.style.backgroundColor = "#ffcccc";
+                } else {
+                    resultDiv.innerHTML = `
+                        <strong>Root Cause:</strong> ${data.root_cause_analysis || "N/A"}<br>
+                        <strong>Correlation:</strong> ${data.possible_correlation || "N/A"}<br>
+                        <strong>Recommendation:</strong> ${data.recommendation || "N/A"}
+                    `;
+                    resultDiv.style.backgroundColor = "#e6f7ff";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
